@@ -232,6 +232,39 @@ module CoingeckoRuby
         get "coins/#{id}/market_chart", vs_currency: currency, days: days, interval: 'daily', **options
       end
 
+      # Fetches a coin's historical price data within a range of timestamp.
+      # @param id [String] the coin id to fetch.
+      # @param from [Date] from date, as Date object or UNIX Timestamp (eg. 1392577232)
+      # @param to [Date] to date, as Date object or UNIX Timestamp (eg. 1422577232)
+      # @param currency [String] the currency used to display daily historical price. Defaults to USD.
+      #
+      # @return [Hash] returns the coin's daily historical price data within the number of days given.
+      #
+      # @example Fetch Bitcoin's daily historical price within given timestamp range.
+      #   client.historical_price_in_range('bitcoin', from: 1392577232, to: 1422577232)
+      # @example Sample response object (truncated)
+      #   {
+      #     "prices" => [
+      #       [1620000000000, 56600.74528738432], # [UNIX timestamp for minutely price data, coin price in given currency]
+      #       [1620086400000, 57200.30029871162],
+      #       [1620172800000, 53464.37021950372],
+      #     ], "market_caps" => [
+      #       [1620000000000, 1057850321948.5465],
+      #       [1620086400000, 1069571255195.5189],
+      #       [1620172800000, 999775008412.3738],
+      #     ], "total_volumes" => [
+      #       [1620000000000, 39072664393.929405],
+      #       [1620086400000, 54132470274.07509],
+      #       [1620172800000, 71296763919.13268],
+      #     ]
+      #   }
+      def historical_price_in_range(id, currency: 'usd', from:, to:, **options)
+        from_timestamp = from.respond_to?(:to_time) ? from.to_time.to_i : from
+        to_timestamp = to.respond_to?(:to_time) ? to.to_time.to_i : to
+
+        get "coins/#{id}/market_chart/range", vs_currency: currency, from: from_timestamp, to: to_timestamp, **options
+      end
+
       # @deprecated Use {#daily_historical_price} instead
       def get_daily_historical_prices(id:, days:, currency: 'usd')
         daily_historical_price(id, currency: currency, days: days)

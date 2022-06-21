@@ -48,6 +48,13 @@ class TestPrices < Minitest::Test
     assert_includes response, 'total_volumes'
   end
 
+  def test_that_it_gets_historical_price_in_range
+    response = @client.historical_price_in_range('bitcoin', from: Date.new(2022, 1, 1), to: Date.new(2022, 6, 1))
+    assert_includes response, 'prices'
+    assert_includes response, 'market_caps'
+    assert_includes response, 'total_volumes'
+  end
+
   def test_that_it_gets_ohlc_data_for_one_coin_in_the_last_7_days
     response = @client.ohlc('bitcoin', days: 7)
     data = response[0]
