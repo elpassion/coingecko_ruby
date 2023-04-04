@@ -27,9 +27,12 @@ module CoingeckoRuby
     attr_reader :client
 
     def initialize(**options)
+      @pro_api_key = options.delete(:pro_api_key)
+
       options.each do |key, value|
         instance_variable_set("@#{key}", value)
       end
+
       yield self if block_given?
     end
   end
